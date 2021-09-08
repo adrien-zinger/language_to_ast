@@ -6,22 +6,30 @@ impl Ast {
     pub fn from_s_expression(&mut self, lines: Line) {
         let mut parentheses = 0;
         let mut code = String::new();
+        let mut decrement_flag = false;
         for line in lines.flatten() {
             for c in line.trim().chars() {
                 if c == '(' {
-                    if parentheses != 0 && !code.is_empty() {
+                    decrement_flag = false;
+                    if !code.trim().is_empty() {
                         self.insert(code.trim());
                         code.drain(..);
-                        self.increment();
                     }
+                    self.increment();
                     parentheses += 1;
                 } else if c == ')' {
-                    parentheses -= 1;
-                    if !code.is_empty() {
-                        self.insert(code.trim());
-                        code.drain(..);
+                    if !code.trim().is_empty() {
+                        if decrement_flag {
+                            self.insert_suffix(code.trim());
+                            code.drain(..);
+                        } else {
+                            self.insert(code.trim());
+                            code.drain(..);
+                        }
                     }
+                    decrement_flag = true;
                     self.decrement();
+                    parentheses -= 1;
                 } else {
                     code.push(c);
                 }
@@ -44,6 +52,9 @@ impl Ast {
             }
             if self.nexts(index[0]).is_empty() || index[1] == index[2] {
                 if index[0] != 0 {
+                    if let Some(suffixes) = self.suffixes.get(&index[0]) {
+                        ret.push_str(&suffixes.join(" "));
+                    }
                     ret.push(')');
                 }
                 indexes.pop();

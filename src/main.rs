@@ -40,7 +40,7 @@ fn sample_t_expression() {
 
 fn sample_s_expression() {
     let mut ast = Ast::new();
-    ast.from_s_expression(lines_iter_in("s_expression.wlan"));
+    ast.from_s_expression(lines_iter_in("function.wlan"));
     println!("{}", ast);
     println!("{}", ast.to_s_expression());
 }

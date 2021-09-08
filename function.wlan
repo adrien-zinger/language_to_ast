@@ -1,0 +1,4 @@
+(mother
+(mod1 (sub1) (sub2 (subsub1) (subsub2) suffix))
+(mod2)
+)
